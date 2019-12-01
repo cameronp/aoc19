@@ -1,19 +1,19 @@
 defmodule AdventOfCode.Day01 do
   import Utils, only: [lines: 2]
+  import String, only: [to_integer: 1]
+  import Enum, only: [map: 2, sum: 1]
 
   def part1(input) do
-    required_fuels = input |> modules() |> Enum.map(&fuel_required/1)
-    Enum.sum(required_fuels)
+    input |> modules() |> map(&fuel_required/1) |> sum()
   end
 
   def part2(input) do
-    required_fuels = input |> modules() |> Enum.map(&fuel_for_fuel/1)
-    Enum.sum(required_fuels)
+    input |> modules() |> map(&fuel_for_fuel/1) |> sum()
   end
 
   def modules(input) do
     input
-    |> lines(&String.to_integer/1)
+    |> lines(&to_integer/1)
   end
 
   def fuel_required(mass) do
