@@ -4,4 +4,10 @@ defmodule Utils do
     |> File.read!()
     |> String.split("\n", trim: true)
   end
+
+  def lines(file, parser) do
+    file
+    |> lines()
+    |> Enum.map(parser)
+  end
 end

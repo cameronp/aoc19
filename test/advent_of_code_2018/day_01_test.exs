@@ -3,6 +3,8 @@ defmodule AdventOfCode.Day01Test do
 
   import AdventOfCode.Day01
 
+  @input "inputs/day1.txt"
+
   test "examples" do
     assert fuel_required(12) == 2
     assert fuel_required(14) == 2
@@ -11,8 +13,7 @@ defmodule AdventOfCode.Day01Test do
   end
 
   test "part1" do
-    input = "inputs/day1.txt"
-    result = part1(input)
+    result = part1(@input)
 
     assert result == 3_443_395
   end
@@ -24,11 +25,9 @@ defmodule AdventOfCode.Day01Test do
     assert fuel_for_fuel(100_756) == 50346
   end
 
-  @tag :skip
   test "part2" do
-    input = nil
-    result = part2(input)
+    result = part2(@input)
 
-    assert result
+    assert result == 5_162_216
   end
 end

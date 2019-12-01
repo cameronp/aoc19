@@ -1,5 +1,5 @@
 defmodule AdventOfCode.Day01 do
-  import Utils, only: [lines: 1]
+  import Utils, only: [lines: 2]
 
   def part1(input) do
     required_fuels = input |> modules() |> Enum.map(&fuel_required/1)
@@ -13,8 +13,7 @@ defmodule AdventOfCode.Day01 do
 
   def modules(input) do
     input
-    |> lines()
-    |> Enum.map(&String.to_integer/1)
+    |> lines(&String.to_integer/1)
   end
 
   def fuel_required(mass) do
