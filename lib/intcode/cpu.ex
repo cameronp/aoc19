@@ -1,12 +1,12 @@
 defmodule Intcode.Cpu do
   alias Intcode.{Cpu, Memory}
-  defstruct memory: nil, ip: 0
+  defstruct memory: nil, ip: 0, opcodes: %{}
 
   @spec boot(Intcode.Memory.t()) :: Intcode.Cpu.t()
   @doc """
   Given a `Memory` with an Intcode program loaded, returns a ready to run `Cpu`
   """
-  def boot(%Memory{} = mem), do: %Cpu{memory: mem, ip: 0}
+  def boot(%Memory{} = mem), do: %Cpu{memory: mem, ip: 0, opcodes: load_opcodes()}
 
   @doc """
   Returns true if the given `Cpu` is in an error state.
@@ -29,49 +29,29 @@ defmodule Intcode.Cpu do
     run(new_state)
   end
 
+  defp exec(%Cpu{} = state, instruction) when is_integer(instruction) do
+    {_, fun} = state.opcodes[instruction]
+    fun.(state)
+  end
+
   @doc """
   Returns a list containing a memory dump.
   """
   @spec dump(Intcode.Cpu.t()) :: [Integer.t()]
   def dump(%Cpu{memory: memory}), do: Memory.to_list(memory)
 
-  defp exec(%Cpu{ip: ip, memory: memory} = state, 1) do
-    op1 = memory[ip + 1]
-    op2 = memory[ip + 2]
-    result = memory[ip + 3]
-
-    if op1 > memory[:size] || op2 > memory[:size] || result > memory[:size] do
-      error(state)
-    else
-      %{
-        state
-        | ip: ip + 4,
-          memory: state.memory |> Memory.poke(result, memory[op1] + memory[op2])
-      }
-    end
-  end
-
-  defp exec(%Cpu{ip: ip, memory: memory} = state, 2) do
-    op1 = memory[ip + 1]
-    op2 = memory[ip + 2]
-    result = memory[ip + 3]
-
-    if op1 > memory[:size] || op2 > memory[:size] || result > memory[:size] do
-      error(state)
-    else
-      %{
-        state
-        | ip: ip + 4,
-          memory: state.memory |> Memory.poke(result, memory[op1] * memory[op2])
-      }
-    end
-  end
-
-  defp exec(%Cpu{} = state, 99) do
-    %{state | ip: :halt}
-  end
-
-  defp error(%Cpu{} = state) do
+  def error(%Cpu{} = state) do
     %{state | ip: :error}
+  end
+
+  def load_opcodes() do
+    opcode_modules =
+      :application.get_key(:advent_of_code_2019, :modules)
+      |> elem(1)
+      |> Enum.filter(fn m -> Module.split(m) |> Enum.find(fn s -> s == "Opcodes" end) end)
+
+    opcode_modules
+    |> Enum.map(fn m -> {m.value, {m.name, &m.exec/1}} end)
+    |> Enum.into(%{})
   end
 end
