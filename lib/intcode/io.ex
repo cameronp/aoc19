@@ -1,6 +1,11 @@
 defmodule Intcode.IO do
   alias Intcode.{Cpu, Memory}
 
+  @doc """
+  Runs the given cpu, in its current state, until it errors or halts.
+  Returns the "output" value, which is defined to be the value at address 0.
+  """
+  @spec run(Intcode.Cpu.t()) :: Integer.t()
   def run(%Cpu{} = cpu) do
     result =
       cpu
@@ -12,6 +17,10 @@ defmodule Intcode.IO do
     end
   end
 
+  @doc """
+  Runs the given Cpu, but replaces the values at addresses 1 and 2 with the passed in `noun` and `verb`
+  Returns the "output" value, which is defined to be the value at address 0.
+  """
   @spec run(Intcode.Cpu.t(), Integer.t(), Integer.t()) :: Integer.t()
   def run(%Cpu{} = cpu, noun, verb) do
     cpu
