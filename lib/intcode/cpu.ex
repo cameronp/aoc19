@@ -40,11 +40,12 @@ defmodule Intcode.Cpu do
   @spec dump(Intcode.Cpu.t()) :: [Integer.t()]
   def dump(%Cpu{memory: memory}), do: Memory.to_list(memory)
 
+  @spec error(Intcode.Cpu.t()) :: Intcode.Cpu.t()
   def error(%Cpu{} = state) do
     %{state | ip: :error}
   end
 
-  def load_opcodes() do
+  defp load_opcodes() do
     opcode_modules =
       :application.get_key(:advent_of_code_2019, :modules)
       |> elem(1)
