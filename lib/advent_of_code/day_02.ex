@@ -1,6 +1,5 @@
 defmodule AdventOfCode.Day02 do
-  import Utils
-  alias Intcode.Memory
+  alias Intcode.{Cpu, Memory}
 
   def part1(input) do
     input
@@ -23,58 +22,16 @@ defmodule AdventOfCode.Day02 do
     result =
       state
       |> input_code(noun, verb)
-      |> run(0)
+      |> Cpu.boot()
+      |> Cpu.run()
 
-    case result do
-      %Memory{error: true} -> :error
-      %Memory{error: false} = state -> state[0]
+    case Cpu.error?(result) do
+      true -> :error
+      false -> result.memory[0]
     end
   end
 
   def input_code(%Memory{} = state, a, b) do
     state |> Memory.poke(1, a) |> Memory.poke(2, b)
   end
-
-  def run(%Memory{} = state, :halt), do: state |> Memory.succeed()
-
-  def run(%Memory{} = state, :error), do: Memory.fail(state)
-
-  def run(%Memory{} = state, ip) do
-    instruction = state[ip]
-    {new_ip, new_state} = exec(state, ip, instruction)
-    run(new_state, new_ip)
-  end
-
-  def exec(%Memory{} = state, ip, 1) do
-    op1 = state[ip + 1]
-    op2 = state[ip + 2]
-    result = state[ip + 3]
-
-    if op1 > state[:size] || op2 > state[:size] || result > state[:size] do
-      error(state)
-    else
-      new_state = state |> Memory.poke(result, state[op1] + state[op2])
-      {ip + 4, new_state}
-    end
-  end
-
-  def exec(%Memory{} = state, ip, 2) do
-    op1 = state[ip + 1]
-    op2 = state[ip + 2]
-    result = state[ip + 3]
-
-    if op1 > state[:size] || op2 > state[:size] || result > state[:size] do
-      error(state)
-    else
-      new_state = state |> Memory.poke(result, state[op1] * state[op2])
-
-      {ip + 4, new_state}
-    end
-  end
-
-  def exec(%Memory{} = state, _ip, 99) do
-    {:halt, state}
-  end
-
-  def error(state), do: {:error, state}
 end
