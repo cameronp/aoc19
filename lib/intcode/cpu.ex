@@ -1,12 +1,12 @@
 defmodule Intcode.Cpu do
-  alias Intcode.{Cpu, Memory}
+  alias Intcode.{Cpu, Memory, OpCode}
   defstruct memory: nil, ip: 0, opcodes: %{}
 
   @spec boot(Intcode.Memory.t()) :: Intcode.Cpu.t()
   @doc """
   Given a `Memory` with an Intcode program loaded, returns a ready to run `Cpu`
   """
-  def boot(%Memory{} = mem), do: %Cpu{memory: mem, ip: 0, opcodes: load_opcodes()}
+  def boot(%Memory{} = mem), do: %Cpu{memory: mem, ip: 0, opcodes: OpCode.load_opcodes()}
 
   @doc """
   Returns true if the given `Cpu` is in an error state.
@@ -43,16 +43,5 @@ defmodule Intcode.Cpu do
   @spec error(Intcode.Cpu.t()) :: Intcode.Cpu.t()
   def error(%Cpu{} = state) do
     %{state | ip: :error}
-  end
-
-  defp load_opcodes() do
-    opcode_modules =
-      :application.get_key(:advent_of_code_2019, :modules)
-      |> elem(1)
-      |> Enum.filter(fn m -> Module.split(m) |> Enum.find(fn s -> s == "Opcodes" end) end)
-
-    opcode_modules
-    |> Enum.map(fn m -> {m.value, {m.name, &m.exec/1}} end)
-    |> Enum.into(%{})
   end
 end
