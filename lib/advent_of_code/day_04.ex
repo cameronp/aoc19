@@ -1,40 +1,17 @@
 defmodule AdventOfCode.Day04 do
   alias Utils.List, as: L
 
-  def part1({start, finish}) do
-    start..finish
-    |> Enum.to_list()
-    |> Enum.filter(&valid?/1)
-    |> Enum.count()
-  end
+  def part1({start, finish}), do: start..finish |> Enum.count(&valid?/1)
 
-  def part2({start, finish}) do
-    start..finish
-    |> Enum.to_list()
-    |> Enum.filter(&extra_valid?/1)
-    |> Enum.count()
-  end
+  def part2({start, finish}), do: start..finish |> Enum.count(&extra_valid?/1)
 
-  def valid?(number) do
-    double_digits?(number) && ascending?(number)
-  end
+  defp valid?(number), do: double_digits?(number) && ascending?(number)
 
-  def extra_valid?(number) do
-    valid?(number) && double_digits_isolated?(number)
-  end
+  defp extra_valid?(number), do: valid?(number) && double_digits_isolated?(number)
 
-  def double_digits?(number) do
-    Integer.digits(number)
-    |> L.has_doubled_elements?()
-  end
+  defp double_digits?(number), do: Integer.digits(number) |> L.has_doubled_elements?()
 
-  def double_digits_isolated?(number) do
-    Integer.digits(number)
-    |> L.has_isolated_double?()
-  end
+  defp double_digits_isolated?(number), do: Integer.digits(number) |> L.has_isolated_double?()
 
-  def ascending?(number) do
-    Integer.digits(number)
-    |> L.is_sorted?()
-  end
+  defp ascending?(number), do: Integer.digits(number) |> L.is_sorted?()
 end
