@@ -28,6 +28,10 @@ defmodule Intcode.IO do
     |> run
   end
 
+  def input(), do: IO.read(:line) |> String.to_integer()
+
+  def output(int), do: IO.write(int)
+
   defp input_code(%Cpu{} = state, a, b) do
     new_memory = state.memory |> Memory.poke(1, a) |> Memory.poke(2, b)
     %{state | memory: new_memory}

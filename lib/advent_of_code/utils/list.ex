@@ -56,4 +56,6 @@ defmodule Utils.List do
   def skip([], _val), do: []
   def skip([val1 | _] = list, val) when not (val == val1), do: list
   def skip([_ | t], val), do: skip(t, val)
+
+  def pad(list, count, pad_value), do: list ++ List.duplicate(pad_value, count)
 end

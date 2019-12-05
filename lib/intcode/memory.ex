@@ -36,6 +36,11 @@ defmodule Intcode.Memory do
     |> Enum.map(fn k -> memory.memory[k] end)
   end
 
+  def to_list(%Memory{} = memory, start, length) do
+    start..(start + length)
+    |> Enum.map(fn p -> memory[p] end)
+  end
+
   @spec poke(Memory.t(), integer, integer) :: Memory.t()
   def poke(%Memory{memory: memory_internal, size: size} = mem, addr, val)
       when is_integer(addr) and addr <= size,

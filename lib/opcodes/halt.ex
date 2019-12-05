@@ -2,7 +2,7 @@ defmodule Intcode.Opcodes.Halt do
   @behaviour Intcode.OpCode
   alias Intcode.Cpu
 
-  def exec(%Cpu{} = state) do
+  def exec(%Cpu{} = state, []) do
     %{state | ip: :halt}
   end
 
