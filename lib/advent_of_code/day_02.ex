@@ -16,7 +16,11 @@ defmodule AdventOfCode.Day02 do
   end
 
   def find_result(%Cpu{} = state, result) do
-    for(n <- 0..180, v <- 0..180, do: {n, v, Intcode.IO.run(state, n, v)})
+    for(
+      n <- 0..(state.memory[:size] - 1),
+      v <- 0..(state.memory[:size] - 1),
+      do: {n, v, Intcode.IO.run(state, n, v)}
+    )
     |> Enum.find(fn {_, _, r} -> r == result end)
   end
 end

@@ -3,13 +3,14 @@ defmodule Intcode.Opcodes.Out do
   alias Intcode.{Cpu, IO}
   import Intcode.OpCode, only: [val: 2]
 
-  def exec(%Cpu{ip: ip, memory: memory} = state, a) do
-    IO.output(val(a, memory))
+  def exec(%Cpu{memory: memory} = state, [a]) do
+    if !state.silent? do
+      IO.output(val(a, memory))
+    end
 
-    %{
-      state
-      | ip: ip + 2
-    }
+    state
+    |> Cpu.inc_ip(arity() + 1)
+    |> Cpu.record_output(val(a, memory))
   end
 
   def name(), do: "out"

@@ -7,14 +7,8 @@ defmodule Intcode.IO do
   """
   @spec run(Intcode.Cpu.t()) :: Integer.t()
   def run(%Cpu{} = cpu) do
-    result =
-      cpu
-      |> Cpu.run()
-
-    case Cpu.error?(result) do
-      true -> :error
-      false -> output_code(result)
-    end
+    cpu
+    |> Cpu.run()
   end
 
   @doc """
@@ -23,14 +17,20 @@ defmodule Intcode.IO do
   """
   @spec run(Intcode.Cpu.t(), Integer.t(), Integer.t()) :: Integer.t()
   def run(%Cpu{} = cpu, noun, verb) do
-    cpu
-    |> input_code(noun, verb)
-    |> run
+    result =
+      cpu
+      |> input_code(noun, verb)
+      |> run
+
+    case Cpu.error?(result) do
+      true -> :error
+      false -> output_code(result)
+    end
   end
 
-  def input(), do: IO.read(:line) |> String.to_integer()
+  def input(), do: IO.read(:line) |> String.trim() |> String.to_integer()
 
-  def output(int), do: IO.write(int)
+  def output(int), do: IO.puts(int)
 
   defp input_code(%Cpu{} = state, a, b) do
     new_memory = state.memory |> Memory.poke(1, a) |> Memory.poke(2, b)

@@ -1,6 +1,6 @@
 defmodule Intcode.Cpu do
   alias Intcode.{Cpu, Memory, OpCode}
-  defstruct memory: nil, ip: 0, opcode_modules: %{}
+  defstruct memory: nil, ip: 0, opcode_modules: %{}, output: [], input: [], silent?: false
 
   @spec boot(Intcode.Memory.t()) :: Intcode.Cpu.t()
   @doc """
@@ -48,4 +48,15 @@ defmodule Intcode.Cpu do
   def error(%Cpu{} = state) do
     %{state | ip: :error}
   end
+
+  def inc_ip(%Cpu{ip: ip} = state, inc), do: %{state | ip: ip + inc}
+
+  def set_ip(%Cpu{} = state, new_ip), do: %{state | ip: new_ip}
+
+  def poke(%Cpu{memory: memory} = state, addr, val),
+    do: %{state | memory: memory |> Memory.poke(addr, val)}
+
+  def record_output(%Cpu{output: output} = state, i), do: %{state | output: [i | output]}
+
+  def preload_input(%Cpu{} = state, input), do: %{state | input: input, silent?: true}
 end

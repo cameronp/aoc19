@@ -1,17 +1,24 @@
-defmodule Intcode.Opcodes.Mul do
+defmodule Intcode.Opcodes.Lt do
   @behaviour Intcode.OpCode
   alias Intcode.Cpu
+
   import Intcode.OpCode, only: [val: 2]
 
   def exec(%Cpu{memory: memory} = state, [a, b, {:ptr, p}]) do
+    flag =
+      case val(a, memory) < val(b, memory) do
+        true -> 1
+        false -> 0
+      end
+
     state
     |> Cpu.inc_ip(arity() + 1)
-    |> Cpu.poke(p, val(a, memory) * val(b, memory))
+    |> Cpu.poke(p, flag)
   end
 
-  def value(), do: 2
-
-  def name(), do: "mul"
+  def name(), do: "lt"
 
   def arity(), do: 3
+
+  def value, do: 7
 end

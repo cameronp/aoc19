@@ -1,15 +1,13 @@
 defmodule Intcode.Opcodes.Add do
   @behaviour Intcode.OpCode
-  alias Intcode.{Cpu, Memory}
+  alias Intcode.Cpu
 
   import Intcode.OpCode, only: [val: 2]
 
-  def exec(%Cpu{ip: ip, memory: memory} = state, [a, b, {:ptr, p}]) do
-    %{
-      state
-      | ip: ip + 4,
-        memory: state.memory |> Memory.poke(p, val(a, memory) + val(b, memory))
-    }
+  def exec(%Cpu{memory: memory} = state, [a, b, {:ptr, p}]) do
+    state
+    |> Cpu.inc_ip(arity() + 1)
+    |> Cpu.poke(p, val(a, memory) + val(b, memory))
   end
 
   def name(), do: "add"

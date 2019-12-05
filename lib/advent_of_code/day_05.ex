@@ -1,7 +1,25 @@
 defmodule AdventOfCode.Day05 do
-  def part1(_args) do
+  alias Intcode.{Cpu, Memory}
+
+  def part1(input) do
+    cpu =
+      input
+      |> Memory.load()
+      |> Cpu.boot()
+      |> Cpu.preload_input([1])
+      |> Intcode.IO.run()
+
+    cpu.output |> hd()
   end
 
-  def part2(_args) do
+  def part2(input) do
+    cpu =
+      input
+      |> Memory.load()
+      |> Cpu.boot()
+      |> Cpu.preload_input([5])
+      |> Intcode.IO.run()
+
+    cpu.output |> hd()
   end
 end

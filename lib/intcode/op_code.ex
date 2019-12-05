@@ -1,5 +1,5 @@
 defmodule Intcode.OpCode do
-  alias Intcode.{Cpu}
+  alias Intcode.{Cpu, Memory}
   @callback exec(Cpu.t(), [{atom, integer}]) :: Cpu.t()
   @callback name() :: binary
   @callback value() :: integer
@@ -45,5 +45,6 @@ defmodule Intcode.OpCode do
   def parse_parms([1 | t], [val | mem_t]), do: [{:val, val} | parse_parms(t, mem_t)]
 
   def val({:val, v}, _), do: v
-  def val({:ptr, p}, memory), do: memory[p]
+  def val({:ptr, p}, %Memory{size: size} = memory) when size >= p, do: memory[p]
+  def val({:ptr, _}, _), do: raise(RuntimeError, message: "Intcode error: bad memory pointer")
 end
