@@ -1,6 +1,15 @@
 defmodule Intcode.Cpu do
-  alias Intcode.{Cpu, Memory, OpCode}
-  defstruct memory: nil, ip: 0, opcode_modules: %{}, output: [], input: [], silent?: false
+  alias Intcode.{Cpu, Memory, OpCode, VmSocket}
+
+  defstruct memory: nil,
+            ip: 0,
+            opcode_modules: %{},
+            output: [],
+            input: [],
+            silent?: false,
+            vm_socket_in: nil,
+            vm_socket_out: nil,
+            monitor: nil
 
   @spec boot(Intcode.Memory.t()) :: Intcode.Cpu.t()
   @doc """
@@ -59,4 +68,14 @@ defmodule Intcode.Cpu do
   def record_output(%Cpu{output: output} = state, i), do: %{state | output: [i | output]}
 
   def preload_input(%Cpu{} = state, input), do: %{state | input: input, silent?: true}
+
+  def start_vm_socket_in(%Cpu{} = state) do
+    %{state | vm_socket_in: VmSocket.start([])}
+  end
+
+  def connect_vm_socket_out(%Cpu{} = state, socket) do
+    %{state | vm_socket_out: socket}
+  end
+
+  def monitor(%Cpu{} = state, pid) when is_pid(pid), do: %{state | monitor: pid}
 end
